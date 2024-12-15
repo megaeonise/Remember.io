@@ -3,18 +3,17 @@ import "./App.css"
 
 const App = () => {
   const [color, setColor] = useState('red')
-  var colorCount = 0
+  const [colorcount, setcolorCount] = useState(0)
   const colorArray = ['blue', 'green', 'red']
 
   const colorChanger = () => {
+    console.log(colorcount)
     console.log('color change requested')
-    setColor(colorArray[colorCount])
-    colorCount = colorCount + 1
-
-    if (colorCount > 2) colorCount = 0
-
+    setColor(colorArray[colorcount])
+    setcolorCount(colorcount+1)
+    if (colorcount >= 2) setcolorCount(0)
   }
-  console.log(colorCount)
+
   return (
     
     <div>
