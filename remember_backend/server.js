@@ -26,6 +26,7 @@ backend.use(morgan('dev'))
 //Routes
 backend.use('/api/v1/auth',require('./routes/userRoutes.js'))
 
+
 //Port
 const PORT = process.env.PORT || 4000
 

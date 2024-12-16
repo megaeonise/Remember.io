@@ -3,6 +3,7 @@ import React,{useState} from 'react'
 import InputBox from '../../components/InputBox'
 import SubmitButton from '../../components/SubmitButton';
 import {Alert} from 'react-native'
+import axios from 'axios';
 // States
 const Register = ({navigation}) => {
     const [name, setName] = useState('');
@@ -11,7 +12,7 @@ const Register = ({navigation}) => {
     const [loading, setLoading] = useState(false);
 
 // Functions
-const handleSubmit = () => {
+const handleSubmit = async () => {
   console.log("Button Pressed")
   try {
     setLoading(true);
@@ -20,9 +21,13 @@ const handleSubmit = () => {
       Alert.alert('Please fill all the fields');
       return;
   }
+  
   setLoading(false);
+  const {data} = await axios.post('http://192.168.68.108:4000/api/v1/auth/register',{name,email,password});
+  Alert.alert(data && data.message);
   console.log('Registered')
 }catch (error) {
+    Alert.alert(error.response.data.message);
     setLoading(false)
     console.log(error)
   }

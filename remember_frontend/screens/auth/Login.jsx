@@ -3,6 +3,9 @@ import React,{useState} from 'react'
 import InputBox from '../../components/InputBox'
 import SubmitButton from '../../components/SubmitButton';
 import {Alert} from 'react-native'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // States
 const Login = ({navigation}) => {
     const [email, setEmail] = useState('');
@@ -10,7 +13,7 @@ const Login = ({navigation}) => {
     const [loading, setLoading] = useState(false);
 
 // Functions
-const handleSubmit = () => {
+const handleSubmit = async () => {
   console.log("Button Pressed")
   try {
     setLoading(true);
@@ -20,12 +23,21 @@ const handleSubmit = () => {
       return;
   }
   setLoading(false);
+  const {data} = await axios.post('http://192.168.68.108:4000/api/v1/auth/login',{email,password});
+  Alert.alert(data && data.message);
+  await AsyncStorage.setItem('@auth',JSON.stringify(data));
   console.log('Logged In')
 }catch (error) {
+    Alert.alert(error.response.data.message);
     setLoading(false)
     console.log(error)
   }
+  getLocalStorageData();
 };
+const getLocalStorageData = async () => {
+  let data = await AsyncStorage.getItem('@auth');
+  console.log("Storage Data =>",data);
+}
   return (
     <View style = {styles.container}>
       <Text style = {styles.Title}>Login</Text>
