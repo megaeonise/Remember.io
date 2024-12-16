@@ -4,8 +4,7 @@ import InputBox from '../../components/InputBox'
 import SubmitButton from '../../components/SubmitButton';
 import {Alert} from 'react-native'
 // States
-const Register = ({navigation}) => {
-    const [name, setName] = useState('');
+const Login = ({navigation}) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -15,13 +14,13 @@ const handleSubmit = () => {
   console.log("Button Pressed")
   try {
     setLoading(true);
-    if(!name || !email || !password){
+    if(!email || !password){
       setLoading(false);
       Alert.alert('Please fill all the fields');
       return;
   }
   setLoading(false);
-  console.log('Registered')
+  console.log('Logged In')
 }catch (error) {
     setLoading(false)
     console.log(error)
@@ -29,9 +28,8 @@ const handleSubmit = () => {
 };
   return (
     <View style = {styles.container}>
-      <Text style = {styles.Title}>Register</Text>
-      <View >
-        <InputBox inputTitle = {'Name:'} value = {name} setValue = {setName} />
+      <Text style = {styles.Title}>Login</Text>
+      <View>
         <InputBox
          inputTitle = {'Email:' }
           keyboardType={'email-address'}
@@ -47,13 +45,13 @@ const handleSubmit = () => {
          setValue={setPassword}
          />
       </View>
-      <SubmitButton btnTitle = {'Register'} loading = {loading} handleSubmit={handleSubmit}/>
-      <Text style={styles.linkText}>Already have an account? <Text style={styles.link} onPress={() => navigation.navigate('Login')}>Login</Text></Text>
+      <SubmitButton btnTitle = {'Login'} loading = {loading} handleSubmit={handleSubmit}/>
+      <Text style={styles.linkText}>Don't have an account? <Text style={styles.link} onPress={() => navigation.navigate('Register')}>Register</Text></Text>   
     </View>
   )
 };
 
-export default Register;
+export default Login;
 
 const styles = StyleSheet.create({
   container: {

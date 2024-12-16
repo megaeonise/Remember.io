@@ -1,33 +1,24 @@
 // import { StatusBar } from 'expo-status-bar';
 // import { StyleSheet, Text, View } from 'react-native';
 import Register from './screens/auth/Register';
-export default function App() {
-  return (
-    // <View style={styles.container}>
-    //   <StatusBar style="auto" />
-    //   <Text style={styles.text}>
-    //     Hello !!!
-    //   </Text>
-    //   <Link href="/navigateTest" style ={{color:'blue'}}>Login</Link>
-    // </View>
+import Login from './screens/auth/Login';
+import {NavigationContainer} from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-    <Register/>
+
+
+export default function App() {
+  const Stack = createNativeStackNavigator();
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName='Login'>
+        <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
+        <Stack.Screen name="Register" component={Register} options={{headerShown:false}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#1BBAC8',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-//   text: {
-//     color: '#ABCDE3',
-//     fontSize: 20,
-//     fontFamily:'Comic Sans MS',
-//     fontWeight: 'bold',
-//     alignItems: 'flex-start',
-//   },
 
-// });
+
+
