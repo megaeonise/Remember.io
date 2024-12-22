@@ -1,25 +1,10 @@
 import { useState } from "react"
 import "./App.css"
-import { Text, View } from "react-native"
-import * as Notifications from "expo-notifications"
-
+import Notif from './modules/Notif'
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, View } from 'react-native';
 
 const App = () => {
-  Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-      shouldPlayAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: false
-    })
-  }) 
-
-  Notifications.scheduleNotificationAsync({
-    content: {
-      title: 'Look at that notification',
-      body: "I'm so proud of myself!",
-    },
-    trigger: { seconds: 5, repeats: true },
-  });
   const [color, setColor] = useState('red')
   const [colorcount, setcolorCount] = useState(0)
   const colorArray = ['blue', 'green', 'red']
@@ -31,15 +16,15 @@ const App = () => {
     setcolorCount(colorcount+1)
     if (colorcount >= 2) setcolorCount(0)
   }
-  
+
   return (
-    <View className = {color}>
-    <div>
-      <button onClick = {colorChanger} >
-        <Text className = {color}>Good</Text>
-      </button>
-    </div>
+    <View style={styles.container}>
+      <Text>Open up App.js to start working on your app!</Text>
+      <StatusBar style="auto" />
+      <Notif />
     </View>
   )
 }
 export default App
+
+
