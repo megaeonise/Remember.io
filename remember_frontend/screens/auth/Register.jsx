@@ -23,9 +23,10 @@ const handleSubmit = async () => {
   }
   
   setLoading(false);
-  const {data} = await axios.post('http://192.168.68.108:4000/api/v1/auth/register',{name,email,password});
+  const {data} = await axios.post('/auth/register',{name,email,password});
   Alert.alert(data && data.message);
   console.log('Registered')
+  navigation.navigate('Login');
 }catch (error) {
     Alert.alert(error.response.data.message);
     setLoading(false)

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TextInput, View } from 'react-native'
-import React,{useState} from 'react'
+import React,{useState,useContext} from 'react'
+import { AuthContext } from '../../context/authContext';
 import InputBox from '../../components/InputBox'
 import SubmitButton from '../../components/SubmitButton';
 import {Alert} from 'react-native'
@@ -8,6 +9,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // States
 const Login = ({navigation}) => {
+
+  const {state,setState} = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -23,9 +26,11 @@ const handleSubmit = async () => {
       return;
   }
   setLoading(false);
-  const {data} = await axios.post('http://192.168.68.108:4000/api/v1/auth/login',{email,password});
-  Alert.alert(data && data.message);
+  const {data} = await axios.post('/auth/login',{email,password});
+  setState(data);
   await AsyncStorage.setItem('@auth',JSON.stringify(data));
+  alert(data && data.message);
+  navigation.navigate('Home');
   console.log('Logged In')
 }catch (error) {
     Alert.alert(error.response.data.message);
