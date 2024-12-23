@@ -93,7 +93,7 @@ try {
 
         {_id: user._id},
         process.env.JWT_SECRET,
-        {expiresIn: "7d"},
+        {expiresIn: "2hr"},
     )
 
     user.password = undefined;
