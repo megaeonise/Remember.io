@@ -16,13 +16,6 @@ const AuthProvider = ({ children }) => {
       let data = await AsyncStorage.getItem('@auth');
       let loginData = JSON.parse(data);
       setState({ ...state, user: loginData?.user, token: loginData?.token });
-      if (loginData?.token) {
-        setTimeout(async () => {
-          setState({ user: null, token: '' });
-          await AsyncStorage.removeItem('@auth');
-          
-        }, 10000); // 10 seconds
-      }
     };
     loadLocalStorageData();
   }, []);
