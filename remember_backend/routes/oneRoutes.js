@@ -2,7 +2,7 @@ const express = require('express');
 const { saveOne, getOnes } = require('../controllers/oneController');
 const router = express.Router();
 
-router.post('/one', saveOne)
-router.get('/one', getOnes)
+router.post('/save', saveOne)
+router.get('/:userId', getOnes)
 
 module.exports = router;

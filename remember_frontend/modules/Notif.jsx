@@ -18,43 +18,11 @@ Notifications.setNotificationHandler({
 
 
 //this posts one and two
-const PostTemp = async () => {
-  console.log('tst')
-  const { state } = useContext(AuthContext)
-  console.log('test')
-  const one = Math.floor(Math.random()*100)
-  const two = Math.floor(Math.random()*100)
-  const newTemp = { userId: state.user_id, first: {one}, second: {two} }
-  console.log(one, two)
-  try {
-    const response = await axios.post('/routes/one', newTemp)
-    if (response.data.success) {
-      Alert.alert('One sent')
-    } else {
-      Alert.alert('Failed to send one')
-    }
-  }
-  catch (error) {
-    console.error('Error with one:', error)
-    Alert.alert("Error", "One was not posted")
-  }
-  try {
-    const response = await axios.post('/routes/two', newTemp)
-    if (response.data.success) {
-      Alert.alert('Two sent')
-    } else {
-      Alert.alert('Failed to send two')
-    }
-  }
-  catch (error) {
-    console.error('Error with two:', error)
-    Alert.alert("Error", "Two was not posted")
-  }
-}
+
 
 const GetTemp = async () => {
   try {
-    const response = await axios.get('/routes/one');
+    const response = await axios.get('/one');
     if (response.data.success) {
       console.log(response.data.ones, 'One is here');
     } else {
@@ -65,7 +33,7 @@ const GetTemp = async () => {
     Alert.alert('Error', 'Failed to load one. Please try again.');
   }
   try {
-    const response = await axios.get('/routes/two');
+    const response = await axios.get(`/two/${state.user._id}`);
     if (response.data.success) {
       console.log(response.data.twos, 'Two is here');
     } else {
@@ -87,6 +55,37 @@ const NotifCaller = () => {
   });
 }
 const Notif = () => {
+  const { state } = useContext(AuthContext);
+  const PostTemp = async () => {
+    const one = Math.floor(Math.random()*100)
+    const two = Math.floor(Math.random()*100)
+    const newTemp = { userId: state.user._id, first: one, second: two }
+    console.log(newTemp)
+    try {
+      const response = await axios.post('/one/save', newTemp)
+      if (response.data.success) {
+        Alert.alert('One sent')
+      } else {
+        Alert.alert('Failed to send one')
+      }
+    }
+    catch (error) {
+      console.error('Error with one:', error.response)
+      Alert.alert("Error", "One was not posted")
+    }
+    try {
+      const response = await axios.post('/routes/two', newTemp)
+      if (response.data.success) {
+        Alert.alert('Two sent')
+      } else {
+        Alert.alert('Failed to send two')
+      }
+    }
+    catch (error) {
+      console.error('Error with two:', error)
+      Alert.alert("Error", "Two was not posted")
+    }
+  }
   return (
     <>
     <TextInput />

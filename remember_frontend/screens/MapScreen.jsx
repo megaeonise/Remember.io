@@ -11,7 +11,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { AuthContext } from '../context/authContext';
 import FooterMenu from '../components/Menus/FooterMenu'; // Corrected import path
 
-const GOOGLE_MAPS_APIKEY = 'GOOGLE API KEY';
+const GOOGLE_MAPS_APIKEY = '';
 
 const MapScreen = ({ navigation }) => {
   const { state } = useContext(AuthContext);
@@ -61,6 +61,7 @@ const MapScreen = ({ navigation }) => {
   };
 
   const loadRoutes = async () => {
+    console.log('its there')
     try {
       const response = await axios.get(`/routes/${state.user._id}`);
       if (response.data.success) {
