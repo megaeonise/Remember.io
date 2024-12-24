@@ -5,7 +5,7 @@ import { StyleSheet, View, Button } from "react-native"
 const videoSource =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
-export default function Video() {
+const Video = () => {
   const player = useVideoPlayer(videoSource, player => {
     player.loop = true
     player.play()
@@ -55,3 +55,5 @@ const styles = StyleSheet.create({
     padding: 10
   }
 })
+
+export default Video

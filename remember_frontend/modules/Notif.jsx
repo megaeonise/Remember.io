@@ -18,8 +18,8 @@ const NotifCaller = () => {
   console.log('test')
   Notifications.scheduleNotificationAsync({
     content: {
-      title: 'Look at that notification',
-      body: "IF I SEE MY CYAN NOTIFICATION",
+      title: 'Test Notifcation',
+      body: "Comes when button pressed",
     },
     trigger: null,
   });
