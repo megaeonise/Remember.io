@@ -134,7 +134,6 @@ const MapScreen = ({ navigation }) => {
         <View style={styles.modeButtons}>
           <Button title="Driving" onPress={() => setMode('DRIVING')} />
           <Button title="Walking" onPress={() => setMode('WALKING')} />
-          <Button title="Bicycling" onPress={() => setMode('BICYCLING')} />
           <Button title="Transit" onPress={() => setMode('TRANSIT')} />
         </View>
       </View>
