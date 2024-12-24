@@ -28,6 +28,7 @@ const handleSubmit = async () => {
   setLoading(false);
   const {data} = await axios.post('/auth/login',{email,password});
   setState(data);
+  console.log(data, 'did this work')
   await AsyncStorage.setItem('@auth',JSON.stringify(data));
   alert(data && data.message);
   navigation.navigate('Home');

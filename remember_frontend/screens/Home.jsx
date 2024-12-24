@@ -1,11 +1,12 @@
 import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import FooterMenu from '../components/Menus/FooterMenu';
+import ModuleTest from '../ModuleTest';
 
 const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text></Text>
+       <ModuleTest />
       <FooterMenu navigation={navigation} />
     </View>
   );

@@ -1,6 +1,9 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import MapScreen from '../../screens/MapScreen';
+import { useNavigation } from 'expo-router';
+
 
 const FooterMenu = ({ navigation }) => {
   return (
@@ -17,7 +20,7 @@ const FooterMenu = ({ navigation }) => {
         <FontAwesome5 name={'cog'} size={20} color={'black'} style={styles.iconStyle} />
         <Text style={styles.textStyle}>Settings</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Map')}>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("Map")}>
         <FontAwesome5 name={'map-marked-alt'} size={20} color={'black'} style={styles.iconStyle} />
         <Text style={styles.textStyle}>Map</Text>
       </TouchableOpacity>

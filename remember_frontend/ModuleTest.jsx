@@ -29,7 +29,7 @@ const ModuleTest = () => {
     <SafeAreaProvider>
     <SafeAreaView style={styles.container} edges={['top']}>
     <ScrollView style={styles.scrollView}>
-      <Text style={styles.text}>help app!
+      <Text style={styles.text}>Home Page + API testing
       </Text>
       <StatusBar style="auto" />
       <Notif />

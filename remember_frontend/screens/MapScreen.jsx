@@ -1,16 +1,17 @@
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import React, { useState, useEffect, useContext } from 'react';
-import { StyleSheet, View, Button, Alert, Text, Switch, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Button, Alert, Text, Switch, TouchableOpacity, ScrollView } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
 import axios from 'axios';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import { AuthContext } from '../context/authContext'; // Corrected import path
+import { AuthContext } from '../context/authContext';
+import FooterMenu from '../components/Menus/FooterMenu'; // Corrected import path
 
-const GOOGLE_MAPS_APIKEY = 'API KEY HOLDER';
+const GOOGLE_MAPS_APIKEY = 'GOOGLE API KEY';
 
 const MapScreen = ({ navigation }) => {
   const { state } = useContext(AuthContext);
@@ -41,6 +42,7 @@ const MapScreen = ({ navigation }) => {
   const saveRoute = async () => {
     if (location && destination) {
       const newRoute = { userId: state.user._id, start: location, end: destination };
+      console.log(newRoute)
       try {
         const response = await axios.post('/routes/save', newRoute);
         if (response.data.success) {

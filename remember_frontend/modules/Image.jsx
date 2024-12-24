@@ -10,12 +10,12 @@ export default function ImageView() {
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source="https://picsum.photos/seed/696/3000/2000"
+        source="https://fastly.picsum.photos/id/931/3000/2000.jpg"
         placeholder={{ blurhash }}
         contentFit="cover"
         transition={1000}
       />
-      <Text>wheer my image</Text>
+      <Text></Text>
     </View>
   )
 }
