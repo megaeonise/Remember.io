@@ -20,30 +20,7 @@ Notifications.setNotificationHandler({
 //this posts one and two
 
 
-const GetTemp = async () => {
-  try {
-    const response = await axios.get('/one');
-    if (response.data.success) {
-      console.log(response.data.ones, 'One is here');
-    } else {
-      Alert.alert('Failed to load one');
-    }
-  } catch (error) {
-    console.error('Error loading one:', error);
-    Alert.alert('Error', 'Failed to load one. Please try again.');
-  }
-  try {
-    const response = await axios.get(`/two/${state.user._id}`);
-    if (response.data.success) {
-      console.log(response.data.twos, 'Two is here');
-    } else {
-      Alert.alert('Failed to load Two');
-    }
-  } catch (error) {
-    console.error('Error loading two:', error);
-    Alert.alert('Error', 'Failed to load two. Please try again.');
-  }
-};
+
 
 const NotifCaller = () => {
   Notifications.scheduleNotificationAsync({
@@ -74,7 +51,7 @@ const Notif = () => {
       Alert.alert("Error", "One was not posted")
     }
     try {
-      const response = await axios.post('/routes/two', newTemp)
+      const response = await axios.post('/two/save', newTemp)
       if (response.data.success) {
         Alert.alert('Two sent')
       } else {
@@ -86,6 +63,30 @@ const Notif = () => {
       Alert.alert("Error", "Two was not posted")
     }
   }
+  const GetTemp = async () => {
+    try {
+      const response = await axios.get(`/one/${state.user._id}`);
+      if (response.data.success) {
+        console.log(response.data.ones, 'One is here');
+      } else {
+        Alert.alert('Failed to load one');
+      }
+    } catch (error) {
+      console.error('Error loading one:', error);
+      Alert.alert('Error', 'Failed to load one. Please try again.');
+    }
+    try {
+      const response = await axios.get(`/two/${state.user._id}`);
+      if (response.data.success) {
+        console.log(response.data.twos, 'Two is here');
+      } else {
+        Alert.alert('Failed to load Two');
+      }
+    } catch (error) {
+      console.error('Error loading two:', error);
+      Alert.alert('Error', 'Failed to load two. Please try again.');
+    }
+  };
   return (
     <>
     <TextInput />

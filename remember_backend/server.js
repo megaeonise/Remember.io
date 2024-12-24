@@ -22,8 +22,8 @@ backend.use(morgan('dev'))
 //Routes
 backend.use('/api/v1/auth', require('./routes/userRoutes.js'))
 backend.use('/api/v1/routes', require('./routes/routeRoutes.js')) // Add this line
-backend.use('/api/v1/one', require('./routes/oneRoutes.js')) // Add this line
-backend.use('/api/v1/two', require('./routes/twoRoutes.js')) // Add this line
+backend.use('/api/v1/one', require('./routes/oneRoutes.js')) 
+backend.use('/api/v1/two', require('./routes/twoRoutes.js')) 
 
 //Port
 const PORT = process.env.PORT || 4000

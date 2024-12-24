@@ -3,7 +3,7 @@ const Two = require('../models/twoModel');
 const saveTwo = async (req, res) => {
   try {
     const { userId, first, second } = req.body;
-    const two = new Two({ userId, third, fourth });
+    const two = new Two({ userId, first, second });
     await two.save();
     res.status(201).json({ success: true, message: 'Two saved successfully', two });
   } catch (error) {

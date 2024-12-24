@@ -7,10 +7,10 @@ const twoSchema = new mongoose.Schema({
     required: true,
   },
   first: {
-    one: {type: Number, required: true},
+    type: Number, required: true,
   },
   second: {
-    two: {type: Number, required: true},
+    type: Number, required: true,
   },
 }, { timestamps: true });
 

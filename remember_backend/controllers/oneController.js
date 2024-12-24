@@ -7,6 +7,7 @@ const saveOne = async (req, res) => {
     await one.save();
     res.status(201).json({ success: true, message: 'One saved successfully', one });
   } catch (error) {
+    console.log('why')
     res.status(500).json({ success: false, message: 'Failed to save one', error });
   }
 };
