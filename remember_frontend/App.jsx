@@ -1,8 +1,10 @@
 import { useState } from "react"
 import "./App.css"
 import Notif from './modules/Notif'
+import Video from './modules/Video'
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import * as Device from "expo-device"
 import Constants from "expo-constants"
 
@@ -23,11 +25,24 @@ const App = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text>help app!</Text>
+    <SafeAreaProvider>
+    <SafeAreaView style={styles.container} edges={['top']}>
+    <ScrollView style={styles.scrollView}>
+      <Text style={styles.text}>help app!dfjaofasofafadsf
+        dsafijosadfksadfdsfsdf
+        ds
+        fdssaddsaasd
+        asdasasdasd
+        asdddddddddddd
+        asddddddddddddd
+        asdasdasdasd
+      </Text>
       <StatusBar style="auto" />
       <Notif />
-    </View>
+      <Video />
+    </ScrollView>
+    </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
 export default App
@@ -36,8 +51,13 @@ export default App
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: StatusBar.currentHeight,
   },
-})
+  scrollView: {
+    backgroundColor: 'cyan',
+  },
+  text: {
+    fontSize: 42,
+    padding: 12,
+  },
+});
