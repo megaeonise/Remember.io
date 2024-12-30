@@ -1,12 +1,14 @@
-import { useEvent } from "expo"
+import { useEvent, useState } from "expo"
 import { useVideoPlayer, VideoView } from "expo-video"
-import { StyleSheet, View, Button } from "react-native"
+import { StyleSheet, View, Button, TextInput, Text } from "react-native"
 
 const videoSource =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
+const [videoSrc, onChangeVideoSrc] = useState('')
+
 const Video = () => {
-  const player = useVideoPlayer(videoSource, player => {
+  const player = useVideoPlayer(videoSrc, player => {
     player.loop = true
     player.play()
   })
@@ -17,6 +19,12 @@ const Video = () => {
 
   return (
     <View style={styles.contentContainer}>
+      <Text>Input your video url below</Text>
+      <TextInput 
+        style={styles.input}
+        onChangeText={onChangeVideoSrc}
+        value={videoSrc}
+      />
       <VideoView
         style={styles.video}
         player={player}
@@ -53,7 +61,13 @@ const styles = StyleSheet.create({
   },
   controlsContainer: {
     padding: 10
-  }
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+},
 })
 
 export default Video
