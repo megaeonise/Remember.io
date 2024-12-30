@@ -11,8 +11,8 @@ export default function ImageView() {
       <Image
         style={styles.image}
         source="https://fastly.picsum.photos/id/931/3000/2000.jpg"
-        placeholder={{ blurhash }}
         contentFit="cover"
+        alt="test"
         transition={1000}
       />
       <Text></Text>
