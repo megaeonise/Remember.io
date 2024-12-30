@@ -8,6 +8,7 @@ import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import * as Device from "expo-device"
 import Constants from "expo-constants"
+import ImagePicker from "./modules/ImagePicker"
 
 
 
@@ -40,6 +41,7 @@ const ModuleTest = () => {
         }}
         alt="it doesnt load"/>
       <Video />
+      <ImagePicker />
     </ScrollView>
     </SafeAreaView>
     </SafeAreaProvider>
