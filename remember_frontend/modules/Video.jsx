@@ -1,13 +1,15 @@
-import { useEvent, useState } from "expo"
+import React, {useState,useEffect} from 'react'
+import { useEvent } from "expo"
 import { useVideoPlayer, VideoView } from "expo-video"
 import { StyleSheet, View, Button, TextInput, Text } from "react-native"
 
 const videoSource =
   "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
 
-const [videoSrc, onChangeVideoSrc] = useState('')
 
 const Video = () => {
+  const [videoSrc, onChangeVideoSrc] = useState('')
+
   const player = useVideoPlayer(videoSrc, player => {
     player.loop = true
     player.play()
@@ -16,6 +18,7 @@ const Video = () => {
   const { isPlaying } = useEvent(player, "playingChange", {
     isPlaying: player.playing
   })
+  console.log(videoSrc)
 
   return (
     <View style={styles.contentContainer}>
