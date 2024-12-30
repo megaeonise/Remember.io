@@ -1,0 +1,97 @@
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import Draggable from 'react-native-draggable';
+
+const App = () => {
+  const [bgColor, setBgColor] = useState('#ffffff'); // Background color
+  const [windowColor, setWindowColor] = useState('#e0e0e0'); // Module window color
+  const [fontSize, setFontSize] = useState(16); // Font size
+  const [fontFamily, setFontFamily] = useState('Arial'); // Font family
+  const [moduleVisible, setModuleVisible] = useState(true); // Module visibility
+
+  return (
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
+      {/* Background Color Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Background Color (e.g., #ffddcc)"
+        onChangeText={color => setBgColor(color)}
+      />
+
+      {/* Window Color Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Window Color (e.g., #d3d3d3)"
+        onChangeText={color => setWindowColor(color)}
+      />
+
+      {/* Font Size Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Font Size (e.g., 20)"
+        keyboardType="numeric"
+        onChangeText={size => setFontSize(parseInt(size) || 16)}
+      />
+
+      {/* Font Family Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Font Family (e.g., Courier)"
+        onChangeText={font => setFontFamily(font)}
+      />
+
+      {/* Toggle Visibility Button */}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => setModuleVisible(!moduleVisible)}
+      >
+        <Text style={styles.buttonText}>Toggle Module Visibility</Text>
+      </TouchableOpacity>
+
+      {/* Draggable Module */}
+      {moduleVisible && (
+        <Draggable>
+          <View style={[styles.module, { backgroundColor: windowColor }]}>
+            <Text style={{ fontSize, fontFamily, color: '#000' }}>
+              Customizable Module
+            </Text>
+          </View>
+        </Draggable>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 10,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+  },
+  button: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  module: {
+    padding: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+  },
+});
+
+export default App;
