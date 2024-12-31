@@ -1,13 +1,15 @@
-
 import { useState, useContext } from "react";
 import "./App.css";
 import Notif from './modules/Notif';
 import Video from './modules/Video';
 import ImageView from "./modules/Image";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { PreferencesContext } from './context/preferencesContext';
+import * as Device from "expo-device"
+import Constants from "expo-constants"
+import ImageUpload from "./modules/ImageUpload"
 
 const ModuleTest = () => {
   const { preferences } = useContext(PreferencesContext);
@@ -30,6 +32,12 @@ const ModuleTest = () => {
           <Text style={[styles.text, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Home Page + API testing</Text>
           <StatusBar style="auto" />
           <Notif />
+           <Image 
+      style= {styles.tinylogo}
+      source={{
+          uri: 'https://reactnative.dev/img/tiny_logo.png',
+        }}
+        alt="it doesnt load"/>
           <ImageView />
           <Video />
         </ScrollView>
@@ -51,4 +59,8 @@ const styles = StyleSheet.create({
   text: {
     padding: 12,
   },
+  tinylogo: {
+    width: 50,
+    height: 50
+  }
 });

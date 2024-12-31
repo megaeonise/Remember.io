@@ -8,6 +8,8 @@ import MapScreen from '../../screens/MapScreen';
 import Settings from '../../screens/Settings'; // Import the Settings component
 import { AuthContext } from '../../context/authContext';
 import HeaderMenu from './HeaderMenu';
+import TaskList from '../TaskList';
+import Timer from '../Timer';
 
 const ScreenMenu = () => {
   const { state } = useContext(AuthContext);
@@ -37,6 +39,17 @@ const ScreenMenu = () => {
               headerShown: true,
               title: 'Settings'
             }}
+            />
+            <Stack.Screen
+            name="TaskList"
+            component={TaskList} 
+            options={{ headerShown: false }}
+          />
+            <Stack.Screen
+            name="Timer"
+            component={Timer} 
+            options={{ headerShown: false }}
+
           />
         </>
       ) : (
