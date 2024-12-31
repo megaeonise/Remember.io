@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import { Button, Image, View, StyleSheet, TextInput, Text, ScrollView } from "react-native"
+import { StatusBar } from 'expo-status-bar'
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 
 const Timer = () => {
   const [isPomodoro, setIsPomodoro] = useState(true); // Pomodoro or regular timer
@@ -34,18 +37,41 @@ const Timer = () => {
   };
 
   return (
-    <div>
-      <h2>{isPomodoro ? "Pomodoro Timer" : "Regular Timer"}</h2>
-      <p>{`${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? "0" : ""}${
+  <SafeAreaProvider>
+  <SafeAreaView style={styles.container} edges={['top']}>
+  <ScrollView style={styles.scrollView}>
+  <Text style={styles.text}>{isPomodoro ? "Pomodoro Timer" : "Regular Timer"}</Text>
+      <Text style={styles.text}>{`${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? "0" : ""}${
         timeLeft % 60
-      }`}</p>
-      <button onClick={toggleTimer}>{isRunning ? "Pause" : "Start"}</button>
-      <button onClick={resetTimer}>Reset</button>
-      <button onClick={switchTimerMode}>
-        {isPomodoro ? "Switch to Regular" : "Switch to Pomodoro"}
-      </button>
-    </div>
+      }`}</Text>
+      <Button onPress={toggleTimer} title={isRunning ? "Pause" : "Start"}/>
+      <Button onPress={resetTimer} title='Reset'/>
+      <Button onPress={switchTimerMode} title={isPomodoro ? "Switch to Regular" : "Switch to Pomodoro"} />
+        
+  </ScrollView>
+  </SafeAreaView>
+  </SafeAreaProvider>
   );
 };
 
 export default Timer;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    backgroundColor: 'cyan',
+  },
+  text: {
+    fontSize: 30,
+    padding: 12,
+    paddingTop: StatusBar.currentHeight,
+    paddingLeft: 100
+  },
+  tinylogo: {
+    width: 50,
+    height: 50
+  }
+});

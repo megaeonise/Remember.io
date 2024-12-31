@@ -1,10 +1,17 @@
 import React, { useState } from "react";
 import TaskItem from "./TaskItem";
 import Checklist from "./Checklist";
+import { Button, Image, View, StyleSheet, TextInput, ScrollView, Text } from "react-native"
+import Checkbox from "expo-checkbox";
+import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
+import { StatusBar } from 'expo-status-bar'
+
+
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [importance, setImportance] = useState(false)
 
   const addTask = () => {
     setTasks([
@@ -12,7 +19,7 @@ const TaskList = () => {
       {
         name: newTask,
         completed: false,
-        priority: "low",
+        priority: importance,
         startTime: null,
         deadline: null,
       },
@@ -25,16 +32,24 @@ const TaskList = () => {
     updatedTasks[index].completed = !updatedTasks[index].completed;
     setTasks(updatedTasks);
   };
+  const toggleImportance = () => {
+    setImportance(importance ? false : true)
+  }
+  console.log(tasks)
 
   return (
-    <div>
-      <input
+  <SafeAreaProvider>
+  <SafeAreaView style={styles.container} edges={['top']}>
+  <ScrollView style={styles.scrollView}>
+      <TextInput
         type="text"
         value={newTask}
-        onChange={(e) => setNewTask(e.target.value)}
+        onChangeText={setNewTask}
         placeholder="Add a new task"
       />
-      <button onClick={addTask}>Add Task</button>
+      <Button onPress={addTask} title="Add Task" />
+      <Text>Check box to toggle task importance</Text>
+      <Checkbox style={styles.checkbox} value={importance} onValueChange={toggleImportance} color={importance ? '#FF0000' : undefined}/>
 
       {tasks.map((task, index) => (
         <TaskItem
@@ -45,8 +60,42 @@ const TaskList = () => {
       ))}
 
       <Checklist tasks={tasks} />
-    </div>
+  </ScrollView>
+  </SafeAreaView>
+  </SafeAreaProvider>
   );
 };
 
 export default TaskList;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    marginHorizontal: 16,
+    marginVertical: 32,
+  },
+  section: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  paragraph: {
+    fontSize: 15,
+    alignItems: 'center',
+  },
+  checkbox: {
+    margin: 8,
+  },
+  container: {
+    flex: 1,
+    paddingTop: StatusBar.currentHeight,
+  },
+  scrollView: {
+    backgroundColor: 'cyan',
+  },
+  text: {
+    fontSize: 30,
+    padding: 12,
+    paddingTop: StatusBar.currentHeight,
+    paddingLeft: 100
+  },
+});

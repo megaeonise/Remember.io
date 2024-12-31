@@ -28,6 +28,10 @@ const FooterMenu = ({ navigation }) => {
         <FontAwesome5 name={'check-square'} size={15} color={'black'} style={styles.iconStyle} />
         <Text style={styles.textStyle}>TaskList</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("Timer")}>
+        <FontAwesome5 name={'clock'} size={15} color={'black'} style={styles.iconStyle} />
+        <Text style={styles.textStyle}>Timer</Text>
+      </TouchableOpacity>
     </View>
   );
 };
