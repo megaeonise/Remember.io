@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const routeSchema = new mongoose.Schema({
@@ -6,11 +7,11 @@ const routeSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  start: {
-    latitude: { type: Number, required: true },
-    longitude: { type: Number, required: true },
+  name: {
+    type: String,
+    required: true,
   },
-  end: {
+  destination: {
     latitude: { type: Number, required: true },
     longitude: { type: Number, required: true },
   },

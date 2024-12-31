@@ -1,9 +1,10 @@
+
 const Route = require('../models/routeModel');
 
 const saveRoute = async (req, res) => {
   try {
-    const { userId, start, end } = req.body;
-    const route = new Route({ userId, start, end });
+    const { userId, name, destination } = req.body;
+    const route = new Route({ userId, name, destination });
     await route.save();
     res.status(201).json({ success: true, message: 'Route saved successfully', route });
   } catch (error) {
