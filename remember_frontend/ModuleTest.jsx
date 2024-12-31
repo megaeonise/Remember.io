@@ -4,10 +4,11 @@ import Notif from './modules/Notif'
 import Video from './modules/Video'
 import ImageView from "./modules/Image"
 import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import * as Device from "expo-device"
 import Constants from "expo-constants"
+import ImageUpload from "./modules/ImageUpload"
 
 
 
@@ -33,8 +34,14 @@ const ModuleTest = () => {
       </Text>
       <StatusBar style="auto" />
       <Notif />
-      <ImageView />
+      <Image 
+      style= {styles.tinylogo}
+      source={{
+          uri: 'https://reactnative.dev/img/tiny_logo.png',
+        }}
+        alt="it doesnt load"/>
       <Video />
+      <ImageUpload />
     </ScrollView>
     </SafeAreaView>
     </SafeAreaProvider>
@@ -55,4 +62,8 @@ const styles = StyleSheet.create({
     fontSize: 42,
     padding: 12,
   },
+  tinylogo: {
+    width: 50,
+    height: 50
+  }
 });

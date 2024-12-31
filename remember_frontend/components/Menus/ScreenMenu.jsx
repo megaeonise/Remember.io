@@ -7,6 +7,8 @@ import Home from '../../screens/Home';
 import MapScreen from '../../screens/MapScreen'; // Import the MapScreen component
 import { AuthContext } from '../../context/authContext';
 import HeaderMenu from './HeaderMenu';
+import TaskList from '../TaskList';
+import Timer from '../Timer';
 
 const ScreenMenu = () => {
   const { state } = useContext(AuthContext);
@@ -27,6 +29,16 @@ const ScreenMenu = () => {
           <Stack.Screen
             name="Map"
             component={MapScreen} 
+            options={{ headerShown: false }}
+          />
+            <Stack.Screen
+            name="TaskList"
+            component={TaskList} 
+            options={{ headerShown: false }}
+          />
+            <Stack.Screen
+            name="Timer"
+            component={Timer} 
             options={{ headerShown: false }}
           />
         </>
