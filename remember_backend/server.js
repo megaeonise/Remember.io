@@ -1,3 +1,4 @@
+// remember_backend/server.js
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
@@ -21,9 +22,12 @@ backend.use(morgan('dev'))
 
 //Routes
 backend.use('/api/v1/auth', require('./routes/userRoutes.js'))
-backend.use('/api/v1/routes', require('./routes/routeRoutes.js')) // Add this line
-backend.use('/api/v1/one', require('./routes/oneRoutes.js')) 
-backend.use('/api/v1/two', require('./routes/twoRoutes.js')) 
+backend.use('/api/v1/routes', require('./routes/routeRoutes.js'))
+backend.use('/api/v1/one', require('./routes/oneRoutes.js'))
+backend.use('/api/v1/two', require('./routes/twoRoutes.js'))
+backend.use('/api/v1/favoriteColors', require('./routes/favoriteColorRoutes.js'))
+backend.use('/api/v1/fontSizes', require('./routes/fontSizeRoutes.js'))
+backend.use('/api/v1/fontFamilies', require('./routes/fontFamilyRoutes.js')) // Add this line
 
 //Port
 const PORT = process.env.PORT || 4000

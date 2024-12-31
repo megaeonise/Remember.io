@@ -1,16 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { AuthProvider } from './context/authContext'
-import ScreenMenu from './components/Menus/ScreenMenu'
+
+import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { AuthProvider } from './context/authContext';
+import { PreferencesProvider } from './context/preferencesContext';
+import ScreenMenu from './components/Menus/ScreenMenu';
 
 const RootNavigation = () => {
   return (
     <AuthProvider>
-      <ScreenMenu/>  
+      <PreferencesProvider>
+        <ScreenMenu />
+      </PreferencesProvider>
     </AuthProvider>
-  )
-}
+  );
+};
 
-export default RootNavigation
+export default RootNavigation;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
