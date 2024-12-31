@@ -144,14 +144,14 @@ const Settings = ({ navigation }) => {
           style={styles.button}
           onPress={() => setShowColorModal(true)}
         >
-          <Text style={[styles.buttonText, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Save Favorite Color</Text>
+          <Text style={[styles.buttonText, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Save Color</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
           style={styles.button}
           onPress={() => setShowSelectColorModal(true)}
         >
-          <Text style={[styles.buttonText, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Select Favorite Color</Text>
+          <Text style={[styles.buttonText, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Select Color</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
