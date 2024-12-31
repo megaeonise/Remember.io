@@ -4,7 +4,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from '../../screens/auth/Login';
 import Register from '../../screens/auth/Register';
 import Home from '../../screens/Home';
-import MapScreen from '../../screens/MapScreen'; // Import the MapScreen component
+import MapScreen from '../../screens/MapScreen';
+import Settings from '../../screens/Settings'; // Import the Settings component
 import { AuthContext } from '../../context/authContext';
 import HeaderMenu from './HeaderMenu';
 
@@ -28,6 +29,14 @@ const ScreenMenu = () => {
             name="Map"
             component={MapScreen} 
             options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="Settings"
+            component={Settings}
+            options={{
+              headerShown: true,
+              title: 'Settings'
+            }}
           />
         </>
       ) : (
