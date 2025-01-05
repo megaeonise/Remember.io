@@ -11,7 +11,8 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { AuthContext } from '../context/authContext';
 
 
-const GOOGLE_MAPS_APIKEY = ''; 
+const GOOGLE_MAPS_APIKEY = process.env.EXPO_PUBLIC_GOOGLE;
+ 
 
 const MapScreen = ({ navigation }) => {
   const { state } = useContext(AuthContext);
@@ -82,7 +83,7 @@ const MapScreen = ({ navigation }) => {
         Alert.alert('Please enter a name for the route');
         return;
       }
-      const newRoute = { userId: state.user._id, name: routeName, end: destination };
+      const newRoute = { userId: state.user._id, name: routeName, destination: destination };
       try {
         const response = await axios.post('/routes/save', newRoute);
         if (response.data.success) {

@@ -27,7 +27,8 @@ backend.use('/api/v1/one', require('./routes/oneRoutes.js'))
 backend.use('/api/v1/two', require('./routes/twoRoutes.js'))
 backend.use('/api/v1/favoriteColors', require('./routes/favoriteColorRoutes.js'))
 backend.use('/api/v1/fontSizes', require('./routes/fontSizeRoutes.js'))
-backend.use('/api/v1/fontFamilies', require('./routes/fontFamilyRoutes.js')) // Add this line
+backend.use('/api/v1/fontFamilies', require('./routes/fontFamilyRoutes.js'))
+backend.use('/api/v1/leaveTime', require('./routes/leaveTime.js')) // Add this line
 
 //Port
 const PORT = process.env.PORT || 4000

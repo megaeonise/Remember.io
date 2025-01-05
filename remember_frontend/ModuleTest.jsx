@@ -39,6 +39,7 @@ const ModuleTest = () => {
         }}
         alt="it doesnt load"/>
           <ImageView />
+          <ImageUpload />
           <Video />
         </ScrollView>
       </SafeAreaView>
