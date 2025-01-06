@@ -4,7 +4,7 @@ import Notif from './modules/Notif';
 import Video from './modules/Video';
 import ImageView from "./modules/Image";
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, TextInput } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { PreferencesContext } from './context/preferencesContext';
 import * as Device from "expo-device"
@@ -13,10 +13,8 @@ import ImageUpload from "./modules/ImageUpload"
 
 const ModuleTest = () => {
   const { preferences } = useContext(PreferencesContext);
-  const [color, setColor] = useState('red');
-  const [colorcount, setcolorCount] = useState(0);
-  const colorArray = ['blue', 'green', 'red'];
-
+  const [test, setTest] = useState('')
+  const trigger = null
   const colorChanger = () => {
     console.log(colorcount);
     console.log('color change requested');
@@ -31,7 +29,8 @@ const ModuleTest = () => {
         <ScrollView style={[styles.scrollView, { backgroundColor: preferences.backgroundColor }]}>
           <Text style={[styles.text, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Home Page + API testing</Text>
           <StatusBar style="auto" />
-          <Notif />
+          <TextInput onChangeText={setTest}/>
+          <Notif title={test} body={test} trigger={trigger}/>
            <Image 
       style= {styles.tinylogo}
       source={{

@@ -22,22 +22,24 @@ Notifications.setNotificationHandler({
 
 
 
-const NotifCaller = () => {
+
+const Notif = (props) => {
+  const { state } = useContext(AuthContext);
+  console.log(props, 'next is strigger', props.trigger)
   Notifications.scheduleNotificationAsync({
     content: {
-      title: 'Test Notifcation',
-      body: "Comes when button pressed",
+      title: props.title,
+      body: props.body,
     },
-    trigger: null,
+    trigger: props.trigger, //change to props.trigger
   });
-}
-const Notif = () => {
-  const { state } = useContext(AuthContext);
+  const NotifCaller = () => {
+    
+  }
 
   return (
     <>
-    <TextInput />
-    <Button onPress={NotifCaller} title="test"/>
+    <Text>IOm jiumbo</Text>
     </>
   )
 }
