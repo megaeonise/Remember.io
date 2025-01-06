@@ -4,7 +4,7 @@ import { useVideoPlayer, VideoView } from "expo-video"
 import { StyleSheet, View, Button, TextInput, Text } from "react-native"
 
 const videoSource =
-  "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+  ""
 
 
 const Video = () => {

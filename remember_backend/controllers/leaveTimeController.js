@@ -24,8 +24,18 @@ const addleaveTime = async (req, res) => {
 };
 
 const putleaveTime = async (req, res) => {
-  console.log('wait')
-
+  try {
+    const { userId, time, _id } = req.body;
+    const user_leaveTime = { 
+      userId: userId, 
+      time: time };
+    console.log(user_leaveTime, _id)
+    await leaveTime.findByIdAndUpdate(_id, user_leaveTime, {new:true, runValidators:true});
+    res.status(204).json({ success: true, user_leaveTime })
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ success: false, message: 'Failed to update leave time', error})
+  }
 }
 
 module.exports = { getleaveTime, addleaveTime, putleaveTime };

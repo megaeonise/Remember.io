@@ -4,6 +4,6 @@ const router = express.Router();
 
 router.get('/:userId', getleaveTime);
 router.post('/save', addleaveTime);
-router.put('/', putleaveTime);
+router.put('/:userId', putleaveTime);
 
 module.exports = router;

@@ -9,17 +9,52 @@ import axios from 'axios';
 
 
 const SetTime = ({navigation}) => {
-    const [leaveTime, onChangeleaveTime] = useState(null) 
+    const [leaveTime, onChangeleaveTime] = useState('') 
     const { state } = useContext(AuthContext);
     const { preferences } = useContext(PreferencesContext);
+    const [success, setSuccess] = useState(null)
+    const [id, setId] = useState('')
+    useEffect(() => {
+      getTime()
+      console.log(leaveTime, 'this is the time')
+      if(leaveTime!==''){
+        setSuccess(false)
+        console.log('it coulfd work')
+      }
+      else{
+        setSuccess(true)
+      }
+      console.log(success, 'success')
+    }, [])
+
+    const getTime = async () => {
+      console.log('getting time')
+      try {
+        console.log(`/leaveTime/${state.user._id}`)
+        const response = await axios.get(`/leaveTime/${state.user._id}`);
+        if (response.data.success) {
+          let test = response.data.user_leaveTime[0]._id
+          console.log(test, 'this is my id tnenene nen en')
+          onChangeleaveTime(response.data.user_leaveTime[0].time)
+          setId(test)
+        } else {
+          Alert.alert('Failed to load time');
+        }
+      } catch (error) {
+        console.error('Error loading time:', error);
+        Alert.alert('Error', 'Failed to load time. Please try again.');
+      }
+    };
     const saveTime = async () => {
-        console.log('?')
+        console.log(success)
         if (!leaveTime) {
         Alert.alert('Please set a time');
         return;
         }
         else{
+          if(!success){
           const newTime = { userId: state.user._id, time: leaveTime };
+          console.log(newTime, 'why u have bigpoy')
           try {
             const response = await axios.post('/leaveTime/save', newTime);
             if (response.data.success) {
@@ -31,6 +66,23 @@ const SetTime = ({navigation}) => {
             console.error('Error saving time:', error);
             Alert.alert('Error', 'Failed to save time. Please try again.');
           }
+        } else {
+          const newTime = { userId: state.user._id, time: leaveTime, _id: id };
+          console.log(newTime, 'why u have SMALLpoy', id)
+          try {
+            const response = await axios.put(`/leaveTime/${state.user._id}`, newTime);
+            console.log(response.status)
+            if (response.status===204) {
+              Alert.alert('Time updated successfully');
+            } else {
+              Alert.alert('Failed to updated time');
+            }
+          } catch (error) {
+            console.error('Error updating time:', error);
+            Alert.alert('Error', 'Failed to update time. Please try again.');
+          }
+
+        }
         }
         }
       
