@@ -199,6 +199,17 @@ const MapScreen = ({ navigation }) => {
     }, 50);
   };
 
+  const goToCurrentLocation = () => {
+    if (location) {
+      setRegion({
+        latitude: location.latitude,
+        longitude: location.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       {location ? (
@@ -238,6 +249,13 @@ const MapScreen = ({ navigation }) => {
               />
             )}
           </MapView>
+
+          <TouchableOpacity 
+            style={styles.currentLocationButton}
+            onPress={goToCurrentLocation}
+          >
+            <FontAwesome5 name="location-arrow" size={20} color="#007AFF" />
+          </TouchableOpacity>
 
           <View style={styles.modeContainer}>
             <View style={styles.modeButtons}>
@@ -573,5 +591,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  currentLocationButton: {
+    position: 'absolute',
+    right: 15,
+    bottom: 200,
+    backgroundColor: 'white',
+    padding: 12,
+    borderRadius: 30,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
 });
