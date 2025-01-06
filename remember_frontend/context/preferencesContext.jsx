@@ -7,7 +7,8 @@ export const PreferencesProvider = ({ children }) => {
   const [preferences, setPreferences] = useState({
     backgroundColor: '#ffffff',
     fontSize: 16,
-    fontFamily: 'Arial', // 
+    fontFamily: 'Arial',
+    windowColor: '#1BBAC8',  
   });
 
   useEffect(() => {
@@ -15,6 +16,7 @@ export const PreferencesProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    console.log('PreferencesContext: Saving preferences:', preferences);
     savePreferences();
   }, [preferences]);
 
@@ -22,18 +24,21 @@ export const PreferencesProvider = ({ children }) => {
     try {
       const savedPreferences = await AsyncStorage.getItem('@preferences');
       if (savedPreferences) {
-        setPreferences(JSON.parse(savedPreferences));
+        const parsed = JSON.parse(savedPreferences);
+        console.log('PreferencesContext: Loaded preferences:', parsed);
+        setPreferences(parsed);
       }
     } catch (error) {
-      console.error('Error loading preferences:', error);
+      console.error('PreferencesContext: Error loading preferences:', error);
     }
   };
 
   const savePreferences = async () => {
     try {
       await AsyncStorage.setItem('@preferences', JSON.stringify(preferences));
+      console.log('PreferencesContext: Preferences saved successfully');
     } catch (error) {
-      console.error('Error saving preferences:', error);
+      console.error('PreferencesContext: Error saving preferences:', error);
     }
   };
 

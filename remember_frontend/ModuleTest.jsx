@@ -7,12 +7,14 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { PreferencesContext } from './context/preferencesContext';
+import { AuthContext } from './context/authContext';
 import * as Device from "expo-device"
 import Constants from "expo-constants"
 import ImageUpload from "./modules/ImageUpload"
 
 const ModuleTest = () => {
   const { preferences } = useContext(PreferencesContext);
+  const { state } = useContext(AuthContext);
   const [color, setColor] = useState('red');
   const [colorcount, setcolorCount] = useState(0);
   const colorArray = ['blue', 'green', 'red'];
@@ -29,15 +31,17 @@ const ModuleTest = () => {
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: preferences.backgroundColor }]} edges={['top']}>
         <ScrollView style={[styles.scrollView, { backgroundColor: preferences.backgroundColor }]}>
-          <Text style={[styles.text, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Home Page + API testing</Text>
+    
+          <Text style={[styles.text, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Hello {state?.user?.name || 'Guest'}!</Text>
           <StatusBar style="auto" />
           <Notif />
            <Image 
-      style= {styles.tinylogo}
-      source={{
-          uri: 'https://reactnative.dev/img/tiny_logo.png',
-        }}
-        alt="it doesnt load"/>
+            style={styles.tinylogo}
+            source={{
+              uri: 'https://reactnative.dev/img/tiny_logo.png',
+            }}
+            alt="it doesnt load"
+          />
           <ImageView />
           <Video />
         </ScrollView>
