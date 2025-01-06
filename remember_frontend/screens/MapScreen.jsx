@@ -10,15 +10,17 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { AuthContext } from '../context/authContext';
 
-
-const GOOGLE_MAPS_APIKEY = ''; 
+const GOOGLE_MAPS_APIKEY = 'AIzaSyAYApDXLhlv27JXilv3CfyKYT3-r6eWZ1o';
 
 const MapScreen = ({ navigation }) => {
   const { state } = useContext(AuthContext);
+  const mapRef = useRef(null);
   const [location, setLocation] = useState(null);
   const [destination, setDestination] = useState(null);
   const [routes, setRoutes] = useState([]);
   const [eta, setEta] = useState(null);
+  const [etaWithTraffic, setEtaWithTraffic] = useState(null);
+  const [trafficDensity, setTrafficDensity] = useState(null);
   const [mode, setMode] = useState('DRIVING');
   const [routeName, setRouteName] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -39,20 +41,23 @@ const MapScreen = ({ navigation }) => {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location.coords);
       
-      if (!region) {
-        setRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        });
+      const initialRegion = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      };
+      
+      setRegion(initialRegion);
+      if (mapRef.current) {
+        mapRef.current.animateToRegion(initialRegion, 1000);
       }
 
       Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
           timeInterval: 1000,
-          distanceInterval: 1,
+          distanceInterval: 10,
         },
         (newLocation) => {
           setLocation(newLocation.coords);
@@ -82,7 +87,11 @@ const MapScreen = ({ navigation }) => {
         Alert.alert('Please enter a name for the route');
         return;
       }
-      const newRoute = { userId: state.user._id, name: routeName, end: destination };
+      const newRoute = {
+        userId: state.user._id,
+        name: routeName,
+        end: destination
+      };
       try {
         const response = await axios.post('/routes/save', newRoute);
         if (response.data.success) {
@@ -123,7 +132,41 @@ const MapScreen = ({ navigation }) => {
   };
 
   const handleDirectionsReady = (result) => {
-    setEta(result.duration);
+    const normalDuration = Math.round(result.duration);
+    setEta(normalDuration);
+    
+    const getTrafficData = async () => {
+      try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/directions/json?origin=${debouncedLocation.latitude},${debouncedLocation.longitude}&destination=${destination.latitude},${destination.longitude}&departure_time=${timestamp}&mode=driving&traffic_model=best_guess&key=${GOOGLE_MAPS_APIKEY}`
+        );
+        
+        if (response.data.routes && response.data.routes[0] && response.data.routes[0].legs[0]) {
+          const leg = response.data.routes[0].legs[0];
+          const trafficDuration = Math.round(leg.duration_in_traffic.value / 60);
+          const finalTrafficDuration = Math.max(trafficDuration, normalDuration);
+          setEtaWithTraffic(finalTrafficDuration);
+          
+          const trafficDifference = finalTrafficDuration - normalDuration;
+          
+          if (trafficDifference <= 2) {
+            setTrafficDensity('Low');
+          } else if (trafficDifference <= 10) {
+            setTrafficDensity('Moderate');
+          } else {
+            setTrafficDensity('Heavy');
+          }
+        }
+      } catch (error) {
+        setEtaWithTraffic(normalDuration);
+        setTrafficDensity('Unknown');
+      }
+    };
+
+    if (debouncedLocation && destination) {
+      getTrafficData();
+    }
   };
 
   const handleRegionChangeComplete = (newRegion) => {
@@ -141,6 +184,7 @@ const MapScreen = ({ navigation }) => {
     <View style={styles.container}>
       {location ? (
         <MapView
+          ref={mapRef}
           style={styles.map}
           initialRegion={{
             latitude: location.latitude,
@@ -148,14 +192,13 @@ const MapScreen = ({ navigation }) => {
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
           }}
-          region={region}
           onRegionChangeComplete={handleRegionChangeComplete}
           onLongPress={handleLongPress}
           onPanDrag={() => setIsUserInteracting(true)}
           onTouchEnd={() => {
             setTimeout(() => {
               setIsUserInteracting(false);
-            }, 200);
+            }, 500);
           }}
         >
           <Marker coordinate={location} title="You are here" />
@@ -177,64 +220,54 @@ const MapScreen = ({ navigation }) => {
       )}
 
       <GooglePlacesAutocomplete
-        placeholder="Search for a destination"
+        placeholder='Search for a destination'
+        fetchDetails={true}
+        enablePoweredByContainer={false}
         onPress={(data, details = null) => {
-          const { lat, lng } = details.geometry.location;
-          setDestination({ latitude: lat, longitude: lng });
-          setSelectedRoute(null);
+          if (details) {
+            setDestination({
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+            });
+            setSelectedRoute(null);
+          }
         }}
         query={{
           key: GOOGLE_MAPS_APIKEY,
           language: 'en',
         }}
-        fetchDetails={true}
         styles={{
           container: {
-            flex: 0,
             position: 'absolute',
-            width: '100%',
-            zIndex: 999,
-            elevation: 999,
             top: 10,
-          },
-          textInputContainer: {
-            width: '100%',
-            backgroundColor: 'white',
-            borderRadius: 5,
-            borderWidth: 1,
-            borderColor: '#ddd',
-            padding: 5,
+            left: 10,
+            right: 10,
+            zIndex: 1,
           },
           textInput: {
-            height: 38,
-            color: '#5d5d5d',
+            height: 45,
+            borderRadius: 5,
+            paddingVertical: 5,
+            paddingHorizontal: 10,
             fontSize: 16,
+            backgroundColor: '#fff',
           },
           listView: {
-            backgroundColor: 'white',
-            borderWidth: 1,
-            borderColor: '#ddd',
+            backgroundColor: '#fff',
             borderRadius: 5,
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            zIndex: 999,
-            elevation: 999,
-          },
-          row: {
-            padding: 13,
-            height: 44,
-            flexDirection: 'row',
-          },
-          separator: {
-            height: 0.5,
-            backgroundColor: '#c8c7cc',
+            marginTop: 5,
           },
         }}
+        debounce={300}
+        minLength={2}
+        returnKeyType={'search'}
+        enableHighAccuracyLocation={true}
+        nearbyPlacesAPI="GooglePlacesSearch"
       />
 
       {eta && <Text style={styles.etaText}>Estimated Time of Arrival: {Math.round(eta)} mins</Text>}
+      {etaWithTraffic && <Text style={styles.etaText}>Estimated Time of Arrival with Traffic: {Math.round(etaWithTraffic)} mins</Text>}
+      {trafficDensity && <Text style={styles.etaText}>Traffic Density: {trafficDensity}</Text>}
       
       <View style={styles.buttonsContainer}>
         <TextInput
