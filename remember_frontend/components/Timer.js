@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button, Image, View, StyleSheet, TextInput, Text, ScrollView } from "react-native"
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
+import SetTime from "../screens/SetTime";
 
 const Timer = () => {
   const [isPomodoro, setIsPomodoro] = useState(true); // Pomodoro or regular timer
@@ -47,7 +48,7 @@ const Timer = () => {
       <Button onPress={toggleTimer} title={isRunning ? "Pause" : "Start"}/>
       <Button onPress={resetTimer} title='Reset'/>
       <Button onPress={switchTimerMode} title={isPomodoro ? "Switch to Regular" : "Switch to Pomodoro"} />
-        
+      <SetTime />
   </ScrollView>
   </SafeAreaView>
   </SafeAreaProvider>

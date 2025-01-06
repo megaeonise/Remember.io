@@ -30,7 +30,7 @@ const FooterMenu = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("Timer")}>
         <FontAwesome5 name={'clock'} size={15} color={'black'} style={styles.iconStyle} />
-        <Text style={styles.textStyle}>Timer</Text>
+        <Text style={styles.textStyle}>Time</Text>
       </TouchableOpacity>
     </View>
   );
