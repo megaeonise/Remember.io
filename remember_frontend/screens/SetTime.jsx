@@ -16,28 +16,12 @@ const SetTime = ({navigation}) => {
     const [success, setSuccess] = useState(null)
     const [id, setId] = useState('')
     
-    const now = new Date();
-    const notifDate = new Date()
-    let notifTitle = null
-    let notifBody = null
-    let notifTrigger = null
-    notifDate.setHours(leaveTime[0]+leaveTime[1], leaveTime[3]+leaveTime[4], 0, 0)
-    if (notifDate <= now) {
-      notifDate.setDate(notifDate.getDate() + 1);
-    }
-
-    console.log(notifTrigger, 'WHYHRSUGFHDR')
     useEffect(() => {
       getTime()
       console.log(leaveTime, 'this is the time')
       if(leaveTime!==''){
-        setSuccess(false)
         console.log('it coulfd work')
       }
-      else{
-        setSuccess(true)
-      }
-      console.log(success, 'success')
     }, [])
 
     const getTime = async () => {
@@ -50,6 +34,7 @@ const SetTime = ({navigation}) => {
           console.log(test, 'this is my id tnenene nen en')
           onChangeleaveTime(response.data.user_leaveTime[0].time)
           setId(test)
+          setSuccess(true)
         } else {
           Alert.alert('Failed to load time');
         }
@@ -98,32 +83,6 @@ const SetTime = ({navigation}) => {
         }
         }
         }
-    
-    console.log(notifTrigger)
-    if (notifDate.getHours() === now.getHours()-1 || notifDate.getHours() === now.getHours()) {
-      console.log(now, 'its the current time, does this match?')
-      console.log(notifDate.getHours(),now.getHours())
-      notifTitle = "Time to leave"
-      notifBody = "It is your scheduled time to leave"
-      return (
-        <SafeAreaProvider>
-          <SafeAreaView style={[styles.container, { backgroundColor: preferences.backgroundColor }]} edges={['top']}>
-            <ScrollView style={[styles.scrollView, { backgroundColor: preferences.backgroundColor }]}>
-              <StatusBar style="auto" />
-              <Text style={[styles.text, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>
-                Input the time you will depart below. You will be notified at that time. Enter as 24 Hour Clock time.</Text>
-              <TextInput 
-                style={styles.input}
-                onChangeText={onChangeleaveTime}
-                value={leaveTime}
-              />
-              <Notif title={notifTitle} body={notifBody} trigger={notifTrigger} />
-              <Button title="Update Time" onPress={saveTime}/>
-            </ScrollView>
-          </SafeAreaView>
-        </SafeAreaProvider>
-      );
-    } else {
       return (
         <SafeAreaProvider>
           <SafeAreaView style={[styles.container, { backgroundColor: preferences.backgroundColor }]} edges={['top']}>
@@ -145,7 +104,6 @@ const SetTime = ({navigation}) => {
 
     
     
-}
 
 export default SetTime
 
