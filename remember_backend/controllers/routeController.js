@@ -1,17 +1,14 @@
-
 const Route = require('../models/routeModel');
 
 const saveRoute = async (req, res) => {
   try {
-    const { userId, name, destination } = req.body;
-    console.log(destination, req.body)
-    console.log(userId, destination)
-    const route = new Route({ userId, name, destination });
+    const { userId, name, end } = req.body;
+    const route = new Route({ userId, name, end });
     await route.save();
     res.status(201).json({ success: true, message: 'Route saved successfully', route });
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ success: false, message: 'Failed to save route', error });
+    console.error('Save route error:', error);
+    res.status(500).json({ success: false, message: 'Failed to save route', error: error.message });
   }
 };
 

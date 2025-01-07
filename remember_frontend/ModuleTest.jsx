@@ -8,6 +8,7 @@ import { StyleSheet, Text, View, ScrollView, Image, TextInput, Button } from 're
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { AuthContext } from './context/authContext';
 import { PreferencesContext } from './context/preferencesContext';
+import { AuthContext } from './context/authContext';
 import * as Device from "expo-device"
 import Constants from "expo-constants"
 import ImageUpload from "./modules/ImageUpload"
@@ -30,6 +31,7 @@ const ModuleTest = () => {
   if (notifDate <= now) {
     notifDate.setDate(notifDate.getDate() + 1);
   }
+
 
   useEffect(() => {
     getTime()
@@ -72,16 +74,18 @@ const ModuleTest = () => {
     <SafeAreaProvider>
       <SafeAreaView style={[styles.container, { backgroundColor: preferences.backgroundColor }]} edges={['top']}>
         <ScrollView style={[styles.scrollView, { backgroundColor: preferences.backgroundColor }]}>
-          <Text style={[styles.text, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Home Page + API testing</Text>
+    
+          <Text style={[styles.text, { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }]}>Hello {state?.user?.name || 'Guest'}!</Text>
           <StatusBar style="auto" />
           <TextInput onChangeText={setTest}/>
           <Notif title={notifTitle} body={notifBody} trigger={notifTrigger}/>
            <Image 
-      style= {styles.tinylogo}
-      source={{
-          uri: 'https://reactnative.dev/img/tiny_logo.png',
-        }}
-        alt="it doesnt load"/>
+            style={styles.tinylogo}
+            source={{
+              uri: 'https://reactnative.dev/img/tiny_logo.png',
+            }}
+            alt="it doesnt load"
+          />
           <ImageView />
           <ImageUpload />
           <Video />

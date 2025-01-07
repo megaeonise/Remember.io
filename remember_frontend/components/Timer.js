@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Button, Image, View, StyleSheet, TextInput, Text, ScrollView } from "react-native"
+import { Button, Image, View, StyleSheet, TextInput, Text, ScrollView, TouchableOpacity } from "react-native"
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
+import { PreferencesContext } from '../context/preferencesContext';
 import SetTime from "../screens/SetTime";
 
+
 const Timer = () => {
-  const [isPomodoro, setIsPomodoro] = useState(true); // Pomodoro or regular timer
-  const [timeLeft, setTimeLeft] = useState(isPomodoro ? 25 * 60 : 30 * 60); // Default to Pomodoro (25 mins)
+  const { preferences } = useContext(PreferencesContext);
+  const [isPomodoro, setIsPomodoro] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(isPomodoro ? 25 * 60 : 30 * 60);
   const [isRunning, setIsRunning] = useState(false);
 
   useEffect(() => {
@@ -38,20 +41,71 @@ const Timer = () => {
   };
 
   return (
-  <SafeAreaProvider>
-  <SafeAreaView style={styles.container} edges={['top']}>
-  <ScrollView style={styles.scrollView}>
-  <Text style={styles.text}>{isPomodoro ? "Pomodoro Timer" : "Regular Timer"}</Text>
-      <Text style={styles.text}>{`${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? "0" : ""}${
-        timeLeft % 60
-      }`}</Text>
-      <Button onPress={toggleTimer} title={isRunning ? "Pause" : "Start"}/>
-      <Button onPress={resetTimer} title='Reset'/>
-      <Button onPress={switchTimerMode} title={isPomodoro ? "Switch to Regular" : "Switch to Pomodoro"} />
-      <SetTime />
-  </ScrollView>
-  </SafeAreaView>
-  </SafeAreaProvider>
+    <SafeAreaProvider>
+      <SafeAreaView style={[styles.container, { backgroundColor: preferences.backgroundColor }]} edges={['top']}>
+        <ScrollView style={[styles.scrollView, { backgroundColor: preferences.backgroundColor }]}>
+          <Text style={[
+            styles.title,
+            { 
+              fontSize: preferences.fontSize + 4,
+              fontFamily: preferences.fontFamily
+            }
+          ]}>
+            {isPomodoro ? "Pomodoro Timer" : "Regular Timer"}
+          </Text>
+          
+          <Text style={[
+            styles.timerText,
+            { 
+              fontSize: preferences.fontSize + 20,
+              fontFamily: preferences.fontFamily
+            }
+          ]}>
+            {`${Math.floor(timeLeft / 60)}:${timeLeft % 60 < 10 ? "0" : ""}${timeLeft % 60}`}
+          </Text>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={[styles.button, { backgroundColor: isRunning ? '#ff4444' : (preferences.windowColor || '#1BBAC8') }]}
+              onPress={toggleTimer}
+            >
+              <Text style={[
+                styles.buttonText,
+                { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }
+              ]}>
+                {isRunning ? "Pause" : "Start"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.button, { backgroundColor: preferences.windowColor || '#666' }]}
+              onPress={resetTimer}
+            >
+              <Text style={[
+                styles.buttonText,
+                { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }
+              ]}>
+                Reset
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.button, { backgroundColor: preferences.windowColor || '#1BBAC8' }]}
+              onPress={switchTimerMode}
+            >
+              <Text style={[
+                styles.buttonText,
+                { fontSize: preferences.fontSize, fontFamily: preferences.fontFamily }
+              ]}>
+                {isPomodoro ? "Switch to Regular" : "Switch to Pomodoro"}
+              </Text>
+              <SetTime />
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </SafeAreaProvider>
+
   );
 };
 
@@ -60,19 +114,39 @@ export default Timer;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: StatusBar.currentHeight,
+    padding: 20,
   },
   scrollView: {
-    backgroundColor: 'cyan',
+    flex: 1,
   },
-  text: {
-    fontSize: 30,
-    padding: 12,
-    paddingTop: StatusBar.currentHeight,
-    paddingLeft: 100
+  title: {
+    textAlign: 'center',
+    marginBottom: 20,
+    fontWeight: 'bold',
   },
-  tinylogo: {
-    width: 50,
-    height: 50
-  }
+  timerText: {
+    textAlign: 'center',
+    marginBottom: 40,
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    gap: 10,
+    alignItems: 'center',
+  },
+  button: {
+    padding: 15,
+    borderRadius: 5,
+    minWidth: 200,
+    alignItems: 'center',
+  },
+  resetButton: {
+    backgroundColor: '#666',
+  },
+  switchButton: {
+    backgroundColor: '#1BBAC8',
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });

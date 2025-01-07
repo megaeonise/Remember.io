@@ -1,7 +1,7 @@
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { StyleSheet, View, Button, Alert, Text, TouchableOpacity, TextInput, Modal, FlatList } from 'react-native';
+import { StyleSheet, View, Button, Alert, Text, TouchableOpacity, TextInput, Modal, FlatList, Switch } from 'react-native';
 import MapView, { Marker, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import * as Location from 'expo-location';
@@ -11,15 +11,20 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { AuthContext } from '../context/authContext';
 
 
+
 const GOOGLE_MAPS_APIKEY = process.env.EXPO_PUBLIC_GOOGLE;
  
 
+
 const MapScreen = ({ navigation }) => {
   const { state } = useContext(AuthContext);
+  const mapRef = useRef(null);
   const [location, setLocation] = useState(null);
   const [destination, setDestination] = useState(null);
   const [routes, setRoutes] = useState([]);
   const [eta, setEta] = useState(null);
+  const [etaWithTraffic, setEtaWithTraffic] = useState(null);
+  const [trafficDensity, setTrafficDensity] = useState(null);
   const [mode, setMode] = useState('DRIVING');
   const [routeName, setRouteName] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -27,39 +32,67 @@ const MapScreen = ({ navigation }) => {
   const [region, setRegion] = useState(null);
   const [debouncedLocation, setDebouncedLocation] = useState(null);
   const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const [dynamicMode, setDynamicMode] = useState(false);
+  const [currentBestRoute, setCurrentBestRoute] = useState(null);
   const regionTimeoutRef = useRef(null);
 
   useEffect(() => {
+    let locationSubscription;
+    
     (async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission to access location was denied');
-        return;
-      }
+      try {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          Alert.alert('Permission to access location was denied');
+          return;
+        }
 
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location.coords);
-      
-      if (!region) {
-        setRegion({
+        let location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.High
+        });
+        
+        const initialRegion = {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
-        });
-      }
-
-      Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.High,
-          timeInterval: 1000,
-          distanceInterval: 1,
-        },
-        (newLocation) => {
-          setLocation(newLocation.coords);
+        };
+        
+        setLocation(location.coords);
+        setRegion(initialRegion);
+        
+        if (mapRef.current) {
+          mapRef.current.animateToRegion(initialRegion, 1000);
         }
-      );
+
+        locationSubscription = await Location.watchPositionAsync(
+          {
+            accuracy: Location.Accuracy.High,
+            timeInterval: 1000,
+            distanceInterval: 10,
+          },
+          (newLocation) => {
+            setLocation(newLocation.coords);
+            if (!isUserInteracting && mapRef.current) {
+              mapRef.current.animateToRegion({
+                latitude: newLocation.coords.latitude,
+                longitude: newLocation.coords.longitude,
+                latitudeDelta: 0.0922,
+                longitudeDelta: 0.0421,
+              }, 1000);
+            }
+          }
+        );
+      } catch (error) {
+        Alert.alert('Error', 'Failed to get location. Please check your GPS settings.');
+      }
     })();
+
+    return () => {
+      if (locationSubscription) {
+        locationSubscription.remove();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -72,6 +105,10 @@ const MapScreen = ({ navigation }) => {
     };
   }, [location]);
 
+  useEffect(() => {
+    setCurrentBestRoute(null);
+  }, [destination]);
+
   const handleLongPress = (e) => {
     setDestination(e.nativeEvent.coordinate);
     setSelectedRoute(null);
@@ -83,7 +120,12 @@ const MapScreen = ({ navigation }) => {
         Alert.alert('Please enter a name for the route');
         return;
       }
-      const newRoute = { userId: state.user._id, name: routeName, destination: destination };
+
+      const newRoute = {
+        userId: state.user._id,
+        name: routeName,
+        end: destination
+      };
       try {
         const response = await axios.post('/routes/save', newRoute);
         if (response.data.success) {
@@ -124,7 +166,63 @@ const MapScreen = ({ navigation }) => {
   };
 
   const handleDirectionsReady = (result) => {
-    setEta(result.duration);
+    const normalDuration = Math.round(result.duration);
+    setEta(normalDuration);
+    
+    if (dynamicMode && destination) {
+      if (currentBestRoute) {
+        // Check if new route is at least 2 minutes faster
+        if (currentBestRoute.duration - result.duration > 2) {
+          Alert.alert(
+            'Better Route Found',
+            `A faster route has been found that saves ${Math.round(currentBestRoute.duration - result.duration)} minutes.`
+          );
+          setCurrentBestRoute({
+            duration: result.duration,
+            distance: result.distance
+          });
+        }
+      } else {
+        // Store first route as current best
+        setCurrentBestRoute({
+          duration: result.duration,
+          distance: result.distance
+        });
+      }
+    }
+    
+    const getTrafficData = async () => {
+      try {
+        const timestamp = Math.floor(Date.now() / 1000);
+        const response = await axios.get(
+          `https://maps.googleapis.com/maps/api/directions/json?origin=${debouncedLocation.latitude},${debouncedLocation.longitude}&destination=${destination.latitude},${destination.longitude}&departure_time=${timestamp}&mode=driving&traffic_model=best_guess&key=${GOOGLE_MAPS_APIKEY}`
+        );
+        
+        if (response.data.routes && response.data.routes[0] && response.data.routes[0].legs[0]) {
+          const leg = response.data.routes[0].legs[0];
+          const trafficDuration = Math.round(leg.duration_in_traffic.value / 60);
+          const finalTrafficDuration = Math.max(trafficDuration, normalDuration);
+          setEtaWithTraffic(finalTrafficDuration);
+          
+          const trafficDifference = finalTrafficDuration - normalDuration;
+          
+          if (trafficDifference <= 2) {
+            setTrafficDensity('Low');
+          } else if (trafficDifference <= 10) {
+            setTrafficDensity('Moderate');
+          } else {
+            setTrafficDensity('Heavy');
+          }
+        }
+      } catch (error) {
+        setEtaWithTraffic(normalDuration);
+        setTrafficDensity('Unknown');
+      }
+    };
+
+    if (debouncedLocation && destination) {
+      getTrafficData();
+    }
   };
 
   const handleRegionChangeComplete = (newRegion) => {
@@ -140,26 +238,24 @@ const MapScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {location ? (
+      {location && (
         <MapView
+          ref={mapRef}
           style={styles.map}
-          initialRegion={{
-            latitude: location.latitude,
-            longitude: location.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-          region={region}
-          onRegionChangeComplete={handleRegionChangeComplete}
+          initialRegion={region}
           onLongPress={handleLongPress}
           onPanDrag={() => setIsUserInteracting(true)}
-          onTouchEnd={() => {
-            setTimeout(() => {
-              setIsUserInteracting(false);
-            }, 200);
-          }}
+          onRegionChangeComplete={() => setIsUserInteracting(false)}
         >
-          <Marker coordinate={location} title="You are here" />
+          {location && (
+            <Marker
+              coordinate={{
+                latitude: location.latitude,
+                longitude: location.longitude,
+              }}
+              title="You are here"
+            />
+          )}
           {destination && <Marker coordinate={destination} title="Destination" />}
           {destination && debouncedLocation && (
             <MapViewDirections
@@ -173,70 +269,106 @@ const MapScreen = ({ navigation }) => {
             />
           )}
         </MapView>
-      ) : (
-        <Text>Loading...</Text>
       )}
 
       <GooglePlacesAutocomplete
-        placeholder="Search for a destination"
+        placeholder='Search for a destination'
+        fetchDetails={true}
+        enablePoweredByContainer={false}
         onPress={(data, details = null) => {
-          const { lat, lng } = details.geometry.location;
-          setDestination({ latitude: lat, longitude: lng });
-          setSelectedRoute(null);
+          if (details) {
+            setDestination({
+              latitude: details.geometry.location.lat,
+              longitude: details.geometry.location.lng,
+            });
+            setSelectedRoute(null);
+          }
         }}
         query={{
           key: GOOGLE_MAPS_APIKEY,
           language: 'en',
         }}
-        fetchDetails={true}
         styles={{
           container: {
-            flex: 0,
             position: 'absolute',
-            width: '100%',
-            zIndex: 999,
-            elevation: 999,
-            top: 10,
-          },
-          textInputContainer: {
-            width: '100%',
-            backgroundColor: 'white',
-            borderRadius: 5,
-            borderWidth: 1,
-            borderColor: '#ddd',
-            padding: 5,
+            top: 40,
+            left: 10,
+            right: 10,
+            zIndex: 1,
           },
           textInput: {
-            height: 38,
-            color: '#5d5d5d',
+            height: 50,
+            borderRadius: 10,
+            paddingVertical: 8,
+            paddingHorizontal: 15,
             fontSize: 16,
-          },
-          listView: {
-            backgroundColor: 'white',
+            backgroundColor: '#fff',
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
             borderWidth: 1,
             borderColor: '#ddd',
-            borderRadius: 5,
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            right: 0,
-            zIndex: 999,
-            elevation: 999,
+          },
+          listView: {
+            backgroundColor: '#fff',
+            borderRadius: 10,
+            marginTop: 5,
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+            borderWidth: 1,
+            borderColor: '#ddd',
           },
           row: {
             padding: 13,
-            height: 44,
+            height: 50,
             flexDirection: 'row',
           },
           separator: {
-            height: 0.5,
-            backgroundColor: '#c8c7cc',
+            height: 1,
+            backgroundColor: '#ddd',
+          },
+          description: {
+            fontSize: 15,
           },
         }}
+        debounce={300}
+        minLength={2}
+        returnKeyType={'search'}
+        enableHighAccuracyLocation={true}
+        nearbyPlacesAPI="GooglePlacesSearch"
       />
 
-      {eta && <Text style={styles.etaText}>Estimated Time of Arrival: {Math.round(eta)} mins</Text>}
+      {etaWithTraffic && <Text style={styles.etaText}>ETA: {Math.round(etaWithTraffic)} mins</Text>}
+      {trafficDensity && <Text style={styles.etaText}>Traffic Density: {trafficDensity}</Text>}
       
+      <View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+          <Text style={{ marginRight: 10 }}>Dynamic Mode</Text>
+          <Switch
+            value={dynamicMode}
+            onValueChange={(value) => {
+              setDynamicMode(value);
+              if (value) {
+                setCurrentBestRoute(null);
+              }
+            }}
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={dynamicMode ? "#4CAF50" : "#f4f3f4"}
+          />
+        </View>
+      </View>
+
       <View style={styles.buttonsContainer}>
         <TextInput
           style={styles.routeNameInput}
@@ -247,6 +379,11 @@ const MapScreen = ({ navigation }) => {
         <Button title="Save Route" onPress={saveRoute} />
         <Button title="View Saved Routes" onPress={loadRoutes} />
       </View>
+
+      <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate('Home')}>
+        <FontAwesome5 name={'home'} size={20} color={'black'} style={styles.iconStyle} />
+        <Text style={styles.textStyle}>Home</Text>
+      </TouchableOpacity>
 
       <View style={styles.modeContainer}>
         <Text>Select Mode of Transportation:</Text>
@@ -271,11 +408,6 @@ const MapScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      <TouchableOpacity style={styles.homeButton} onPress={() => navigation.navigate('Home')}>
-        <FontAwesome5 name={'home'} size={20} color={'black'} style={styles.iconStyle} />
-        <Text style={styles.textStyle}>Home</Text>
-      </TouchableOpacity>
 
       <Modal
         animationType="slide"
@@ -310,10 +442,36 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
+  bottomContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+  },
+  infoContainer: {
+    padding: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
   etaText: {
     fontSize: 16,
     textAlign: 'center',
     margin: 10,
+  },
+  modeContainer: {
+    padding: 10,
+    marginBottom: 60,
+    backgroundColor: 'white',
+  },
+  buttonsContainer: {
+    padding: 10,
+    backgroundColor: 'white',
+  },
+  homeButton: {
+    position: 'absolute',
+    bottom: 1.5,
+    right: 3,
   },
   routeNameInput: {
     height: 40,
@@ -323,20 +481,11 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  buttonsContainer: {
-    padding: 10,
-    backgroundColor: 'white',
-  },
-  modeContainer: {
-    padding: 10,
-    marginBottom: 60,
-    backgroundColor: 'white',
-  },
   modeButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     width: '100%',
-    marginTop: 5,
+
   },
   modeButton: {
     padding: 10,
@@ -350,11 +499,6 @@ const styles = StyleSheet.create({
   },
   modeButtonText: {
     color: 'white',
-  },
-  homeButton: {
-    position: 'absolute',
-    bottom: 1.5,
-    right: 3,
   },
   iconStyle: {
     marginBottom: 5,
