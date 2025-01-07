@@ -3,6 +3,8 @@ import { Button, Image, View, StyleSheet, TextInput, Text, ScrollView, Touchable
 import { StatusBar } from 'expo-status-bar'
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context"
 import { PreferencesContext } from '../context/preferencesContext';
+import SetTime from "../screens/SetTime";
+
 
 const Timer = () => {
   const { preferences } = useContext(PreferencesContext);
@@ -97,11 +99,13 @@ const Timer = () => {
               ]}>
                 {isPomodoro ? "Switch to Regular" : "Switch to Pomodoro"}
               </Text>
+              <SetTime />
             </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>
+
   );
 };
 

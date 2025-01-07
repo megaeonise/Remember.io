@@ -17,7 +17,7 @@ const Login = ({navigation}) => {
 
 // Functions
 const handleSubmit = async () => {
-  console.log("Button Pressed")
+  console.log("Button dsfsd")
   try {
     setLoading(true);
     if(!email || !password){
@@ -26,6 +26,7 @@ const handleSubmit = async () => {
       return;
   }
   setLoading(false);
+  console.log(email,password)
   const {data} = await axios.post('/auth/login',{email,password});
   setState(data);
   console.log(data, 'did this work')

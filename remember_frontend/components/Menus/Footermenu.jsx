@@ -28,7 +28,7 @@ const FooterMenu = ({ navigation }) => {
       </TouchableOpacity>
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate("Timer")}>
         <FontAwesome5 name={'clock'} size={preferences.fontSize - 1} color={'black'} style={styles.iconStyle} />
-        <Text style={[styles.textStyle, { fontSize: preferences.fontSize - 4, fontFamily: preferences.fontFamily }]}>Timer</Text>
+        <Text style={[styles.textStyle, { fontSize: preferences.fontSize - 4, fontFamily: preferences.fontFamily }]}>Time</Text>
       </TouchableOpacity>
     </View>
   );

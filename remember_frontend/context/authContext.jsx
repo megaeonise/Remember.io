@@ -10,7 +10,8 @@ const AuthProvider = ({ children }) => {
     token: "",
   });
 
-  axios.defaults.baseURL = 'http://192.168.68.109:4000/api/v1';
+  axios.defaults.baseURL = 'http:/192.168.0.211:4000/api/v1';
+
   useEffect(() => {
     const loadLocalStorageData = async () => {
       let data = await AsyncStorage.getItem('@auth');
